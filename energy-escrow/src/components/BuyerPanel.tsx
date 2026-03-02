@@ -6,15 +6,19 @@ type BuyerPanelProps = {
   disabled: boolean
   createdTradeAddress: string | null
   depositInProgress: boolean
-  createTxSignature?: string | null
-  depositTxSignature?: string | null
-  getExplorerUrl?: (signature: string) => string
   onSellerChange: (value: string) => void
   onEnergyChange: (value: string) => void
   onPriceChange: (value: string) => void
   onDurationChange: (value: string) => void
   onCreateTrade: () => Promise<void>
   onDepositEscrow: () => Promise<void>
+  tradeDetails?: {
+    energyAmountKwh: string
+    pricePerKwhWei: string
+    totalCostWei: string
+    seller: string
+    state: string
+  } | null
 }
 
 export function BuyerPanel({
@@ -25,22 +29,14 @@ export function BuyerPanel({
   disabled,
   createdTradeAddress,
   depositInProgress,
-  createTxSignature,
-  depositTxSignature,
-  getExplorerUrl,
   onSellerChange,
   onEnergyChange,
   onPriceChange,
   onDurationChange,
   onCreateTrade,
   onDepositEscrow,
+  tradeDetails,
 }: BuyerPanelProps) {
-  const tradeAccountUrl = createdTradeAddress
-    ? `https://explorer.solana.com/address/${createdTradeAddress}?cluster=devnet`
-    : null
-  const createTxUrl = createTxSignature && getExplorerUrl ? getExplorerUrl(createTxSignature) : tradeAccountUrl
-  const depositTxUrl = depositTxSignature && getExplorerUrl ? getExplorerUrl(depositTxSignature) : null
-
   const totalCost = (() => {
     const energy = Number(energyKwh) || 0
     const price = Number(pricePerKwhWei) || 0
@@ -58,10 +54,10 @@ export function BuyerPanel({
       <h2>🛒 Buyer - Create Energy Trade</h2>
       <p className="muted">Specify a seller, the energy you need, and how long to complete the trade.</p>
 
-      <form className="form-grid" onSubmit={handleSubmit}>
+      <form className="form-grid" onSubmit={handleSubmit} style={{ opacity: createdTradeAddress && tradeDetails?.state === 'Created' ? 0.5 : 1, pointerEvents: createdTradeAddress && tradeDetails?.state === 'Created' ? 'none' : 'auto' }}>
         <label>
           Seller Wallet Address
-          <input value={seller} onChange={(event) => onSellerChange(event.target.value)} required placeholder="Enter seller's public key" />
+          <input value={seller} onChange={(event) => onSellerChange(event.target.value)} required placeholder="Enter seller's public key" disabled={!!(createdTradeAddress && tradeDetails?.state === 'Created')} />
         </label>
 
         <label>
@@ -104,47 +100,46 @@ export function BuyerPanel({
       </form>
 
       {createdTradeAddress && (
-        <div style={{ marginTop: '1rem', padding: '1rem', background: '#0b2415', borderRadius: '8px', border: '1px solid #22c55e' }}>
-          <h3 style={{ margin: '0 0 0.5rem 0', color: '#22c55e' }}>✅ Trade Created!</h3>
-          <p style={{ margin: '0.3rem 0', fontSize: '0.9rem' }}>
-            <strong>Trade Address:</strong> <span style={{ fontFamily: 'monospace', wordBreak: 'break-all' }}>{createdTradeAddress.slice(0, 16)}...</span>
+        <div style={{ marginTop: '1.5rem', padding: '1.5rem', background: '#0b2415', borderRadius: '8px', border: '2px solid #22c55e' }}>
+          <h3 style={{ margin: '0 0 1rem 0', color: '#22c55e', fontSize: '1.2rem' }}>✅ Trade Successfully Created!</h3>
+          
+          <div style={{ marginBottom: '1rem', paddingBottom: '1rem', borderBottom: '1px solid #22c55e' }}>
+            <p style={{ margin: '0.5rem 0', fontSize: '0.9rem' }}>
+              <strong>Trade Address:</strong> <span style={{ fontFamily: 'monospace', wordBreak: 'break-all', color: '#22c55e' }}>{createdTradeAddress}</span>
+            </p>
+          </div>
+
+          {tradeDetails && (
+            <div style={{ marginBottom: '1rem' }}>
+              <p style={{ margin: '0.5rem 0', fontSize: '0.95rem' }}>
+                <strong>Energy Amount:</strong> {tradeDetails.energyAmountKwh} kWh
+              </p>
+              <p style={{ margin: '0.5rem 0', fontSize: '0.95rem' }}>
+                <strong>Price per kWh:</strong> {tradeDetails.pricePerKwhWei} wei
+              </p>
+              <p style={{ margin: '0.5rem 0', fontSize: '0.95rem' }}>
+                <strong>Total Cost:</strong> <span style={{ color: '#fbbf24', fontWeight: 'bold' }}>{tradeDetails.totalCostWei} wei</span>
+              </p>
+              <p style={{ margin: '0.5rem 0', fontSize: '0.95rem' }}>
+                <strong>Seller:</strong> <span style={{ fontFamily: 'monospace' }}>{tradeDetails.seller.slice(0, 8)}...</span>
+              </p>
+              <p style={{ margin: '0.5rem 0', fontSize: '0.95rem' }}>
+                <strong>Status:</strong> <span style={{ color: '#22c55e', fontWeight: 'bold' }}>{tradeDetails.state}</span>
+              </p>
+            </div>
+          )}
+
+          <p style={{ margin: '0.5rem 0 1rem 0', fontSize: '0.9rem', color: '#cbd5e1' }}>
+            ⚠️ Next step: Click "Deposit Escrow" below to lock in the funds and let the seller start fulfilling the trade.
           </p>
-          <a
-            className={`tx-link ${createTxUrl ? '' : 'tx-link-disabled'}`}
-            href={createTxUrl ?? '#'}
-            target={createTxUrl ? '_blank' : undefined}
-            rel={createTxUrl ? 'noreferrer' : undefined}
-            onClick={(event) => {
-              if (!createTxUrl) {
-                event.preventDefault()
-              }
-            }}
-          >
-            View Transaction (Create Trade)
-          </a>
-          <p style={{ margin: '0.3rem 0', fontSize: '0.9rem', color: '#cbd5e1' }}>
-            Now deposit the escrow amount so the seller can fulfill the trade.
-          </p>
+          
           <button
             onClick={() => void onDepositEscrow()}
             disabled={disabled || depositInProgress}
-            style={{ marginTop: '0.5rem', background: '#22c55e', color: '#0b1020' }}
+            style={{ width: '100%', padding: '0.75rem', marginTop: '0.5rem', background: '#22c55e', color: '#0b1020', fontWeight: 'bold', border: 'none', borderRadius: '4px', cursor: 'pointer', fontSize: '1rem' }}
           >
-            {depositInProgress ? '⏳ Depositing...' : '💰 Deposit Escrow'}
+            {depositInProgress ? '⏳ Depositing Escrow...' : '💰 Deposit Escrow'}
           </button>
-          <a
-            className={`tx-link ${depositTxUrl ? '' : 'tx-link-disabled'}`}
-            href={depositTxUrl ?? '#'}
-            target={depositTxUrl ? '_blank' : undefined}
-            rel={depositTxUrl ? 'noreferrer' : undefined}
-            onClick={(event) => {
-              if (!depositTxUrl) {
-                event.preventDefault()
-              }
-            }}
-          >
-            View Transaction (Escrow Deposit)
-          </a>
         </div>
       )}
     </section>
