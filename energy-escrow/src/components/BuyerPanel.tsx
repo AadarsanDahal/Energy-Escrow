@@ -6,9 +6,9 @@ type BuyerPanelProps = {
   disabled: boolean
   createdTradeAddress: string | null
   depositInProgress: boolean
-  createTxSignature: string | null
-  depositTxSignature: string | null
-  getExplorerUrl: (signature: string) => string
+  createTxSignature?: string | null
+  depositTxSignature?: string | null
+  getExplorerUrl?: (signature: string) => string
   onSellerChange: (value: string) => void
   onEnergyChange: (value: string) => void
   onPriceChange: (value: string) => void
@@ -35,6 +35,12 @@ export function BuyerPanel({
   onCreateTrade,
   onDepositEscrow,
 }: BuyerPanelProps) {
+  const tradeAccountUrl = createdTradeAddress
+    ? `https://explorer.solana.com/address/${createdTradeAddress}?cluster=devnet`
+    : null
+  const createTxUrl = createTxSignature && getExplorerUrl ? getExplorerUrl(createTxSignature) : tradeAccountUrl
+  const depositTxUrl = depositTxSignature && getExplorerUrl ? getExplorerUrl(depositTxSignature) : null
+
   const totalCost = (() => {
     const energy = Number(energyKwh) || 0
     const price = Number(pricePerKwhWei) || 0
@@ -103,6 +109,19 @@ export function BuyerPanel({
           <p style={{ margin: '0.3rem 0', fontSize: '0.9rem' }}>
             <strong>Trade Address:</strong> <span style={{ fontFamily: 'monospace', wordBreak: 'break-all' }}>{createdTradeAddress.slice(0, 16)}...</span>
           </p>
+          <a
+            className={`tx-link ${createTxUrl ? '' : 'tx-link-disabled'}`}
+            href={createTxUrl ?? '#'}
+            target={createTxUrl ? '_blank' : undefined}
+            rel={createTxUrl ? 'noreferrer' : undefined}
+            onClick={(event) => {
+              if (!createTxUrl) {
+                event.preventDefault()
+              }
+            }}
+          >
+            View Transaction (Create Trade)
+          </a>
           <p style={{ margin: '0.3rem 0', fontSize: '0.9rem', color: '#cbd5e1' }}>
             Now deposit the escrow amount so the seller can fulfill the trade.
           </p>
@@ -113,6 +132,19 @@ export function BuyerPanel({
           >
             {depositInProgress ? '⏳ Depositing...' : '💰 Deposit Escrow'}
           </button>
+          <a
+            className={`tx-link ${depositTxUrl ? '' : 'tx-link-disabled'}`}
+            href={depositTxUrl ?? '#'}
+            target={depositTxUrl ? '_blank' : undefined}
+            rel={depositTxUrl ? 'noreferrer' : undefined}
+            onClick={(event) => {
+              if (!depositTxUrl) {
+                event.preventDefault()
+              }
+            }}
+          >
+            View Transaction (Escrow Deposit)
+          </a>
         </div>
       )}
     </section>

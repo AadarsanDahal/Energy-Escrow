@@ -79,6 +79,30 @@ button:disabled {
   border: 1px solid #334155;
 }
 
+.tx-link {
+  display: inline-block;
+  margin-top: 0.6rem;
+  margin-right: 0.5rem;
+  padding: 0.45rem 0.7rem;
+  border: 1px solid #3b82f6;
+  border-radius: 8px;
+  background: #0f172a;
+  color: #93c5fd;
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.tx-link:hover {
+  background: rgba(59, 130, 246, 0.15);
+}
+
+.tx-link-disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: auto;
+}
+
 /* Role Selector */
 .role-buttons {
   display: grid;

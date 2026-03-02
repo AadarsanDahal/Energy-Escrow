@@ -5,7 +5,7 @@ type AdminPanelProps = {
   selectedTrade: string | null
   deliveredKwh: string
   disabled: boolean
-  getExplorerUrl: (signature: string) => string
+  getExplorerUrl?: (signature: string) => string
   onSelectTrade: (tradeAddress: string) => void
   onDeliveredKwhChange: (value: string) => void
   onSettle: () => Promise<void>
@@ -24,6 +24,7 @@ export function AdminPanel({
   onSettle,
 }: AdminPanelProps) {
   const currentTrade = trades.find((t) => t.tradeAddress === selectedTrade)
+  const settleTxUrl = currentTrade?.settleTxSignature && getExplorerUrl ? getExplorerUrl(currentTrade.settleTxSignature) : null
 
   const formatTime = (unixTimestamp: string): string => {
     const ts = Math.floor(Number(unixTimestamp) * 1000)
@@ -115,6 +116,19 @@ export function AdminPanel({
               <button disabled={disabled || !currentTrade} onClick={() => void onSettle()}>
                 ✅ Confirm Settlement
               </button>
+              <a
+                className={`tx-link ${settleTxUrl ? '' : 'tx-link-disabled'}`}
+                href={settleTxUrl ?? '#'}
+                target={settleTxUrl ? '_blank' : undefined}
+                rel={settleTxUrl ? 'noreferrer' : undefined}
+                onClick={(event) => {
+                  if (!settleTxUrl) {
+                    event.preventDefault()
+                  }
+                }}
+              >
+                View Transaction (Settlement)
+              </a>
             </div>
           )}
         </>
