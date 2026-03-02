@@ -1,0 +1,126 @@
+export const energyEscrowIdl = {
+  address: 'DtN36XDqZQKPWV49PEs1cqdgwm2jmN7KoLyf4ME3YBba',
+  metadata: {
+    name: 'energy_escrow',
+    version: '0.1.0',
+    spec: '0.1.0',
+    description: 'Energy escrow program idl for frontend calls',
+  },
+  instructions: [
+    {
+      name: 'createTrade',
+      discriminator: [183, 82, 24, 245, 248, 30, 204, 246],
+      docs: ['Create a trade with predefined parameters'],
+      accounts: [
+        { name: 'trade', writable: true, signer: true },
+        { name: 'creator', writable: true, signer: true },
+        { name: 'systemProgram', address: '11111111111111111111111111111111' },
+      ],
+      args: [
+        { name: 'buyer', type: 'pubkey' },
+        { name: 'seller', type: 'pubkey' },
+        { name: 'energyAmountKwh', type: 'u64' },
+        { name: 'pricePerKwhWei', type: 'u64' },
+        { name: 'startTime', type: 'u64' },
+        { name: 'endTime', type: 'u64' },
+      ],
+    },
+    {
+      name: 'depositEscrow',
+      discriminator: [226, 112, 158, 176, 178, 118, 153, 128],
+      docs: ['Deposit exact escrow amount'],
+      accounts: [
+        { name: 'trade', writable: true },
+        { name: 'buyer', writable: true, signer: true },
+        { name: 'tradeVault', writable: true },
+        { name: 'systemProgram', address: '11111111111111111111111111111111' },
+      ],
+      args: [{ name: 'escrowAmount', type: 'u64' }],
+    },
+    {
+      name: 'settle',
+      discriminator: [175, 42, 185, 87, 144, 131, 102, 212],
+      docs: ['Settle trade with delivered kWh'],
+      accounts: [
+        { name: 'trade', writable: true },
+        { name: 'admin', signer: true },
+        { name: 'tradeVault', writable: true },
+        { name: 'sellerAccount', writable: true },
+        { name: 'buyerAccount', writable: true },
+        { name: 'systemProgram', address: '11111111111111111111111111111111' },
+      ],
+      args: [{ name: 'deliveredKwh', type: 'u64' }],
+    },
+    {
+      name: 'getTrade',
+      discriminator: [26, 164, 232, 119, 124, 60, 192, 241],
+      docs: ['Read-only function to get trade state'],
+      accounts: [{ name: 'trade' }],
+      args: [],
+    },
+  ],
+  accounts: [
+    {
+      name: 'trade',
+      discriminator: [132, 139, 123, 31, 157, 196, 244, 190],
+    },
+  ],
+  types: [
+    {
+      name: 'trade',
+      type: {
+        kind: 'struct',
+        fields: [
+          { name: 'buyer', type: 'pubkey' },
+          { name: 'seller', type: 'pubkey' },
+          { name: 'energyAmountKwh', type: 'u64' },
+          { name: 'pricePerKwhWei', type: 'u64' },
+          { name: 'startTime', type: 'u64' },
+          { name: 'endTime', type: 'u64' },
+          { name: 'escrowAmountWei', type: 'u64' },
+          { name: 'deliveredKwh', type: 'u64' },
+          { name: 'totalCostWei', type: 'u64' },
+          { name: 'state', type: { defined: { name: 'TradeState' } } },
+        ],
+      },
+    },
+    {
+      name: 'TradeState',
+      type: {
+        kind: 'enum',
+        variants: [{ name: 'None' }, { name: 'Created' }, { name: 'Funded' }, { name: 'Settled' }],
+      },
+    },
+    {
+      name: 'TradeSummary',
+      type: {
+        kind: 'struct',
+        fields: [
+          { name: 'buyer', type: 'pubkey' },
+          { name: 'seller', type: 'pubkey' },
+          { name: 'energyAmountKwh', type: 'u64' },
+          { name: 'pricePerKwhWei', type: 'u64' },
+          { name: 'startTime', type: 'u64' },
+          { name: 'endTime', type: 'u64' },
+          { name: 'escrowAmountWei', type: 'u64' },
+          { name: 'deliveredKwh', type: 'u64' },
+          { name: 'state', type: { defined: { name: 'TradeState' } } },
+          { name: 'totalCostWei', type: 'u64' },
+        ],
+      },
+    },
+  ],
+  errors: [
+    { code: 6000, name: 'InvalidAccount', msg: 'Invalid account provided' },
+    { code: 6001, name: 'InvalidTimeRange', msg: 'Invalid time range' },
+    { code: 6002, name: 'InvalidAmount', msg: 'Invalid amount' },
+    { code: 6003, name: 'InvalidPrice', msg: 'Invalid price' },
+    { code: 6004, name: 'TradeAlreadyExists', msg: 'Trade already exists' },
+    { code: 6005, name: 'InvalidTradeState', msg: 'Invalid trade state' },
+    { code: 6006, name: 'UnauthorizedAccount', msg: 'Unauthorized account' },
+    { code: 6007, name: 'IncorrectEscrowAmount', msg: 'Incorrect escrow amount' },
+    { code: 6008, name: 'SettlementTooEarly', msg: 'Settlement too early' },
+    { code: 6009, name: 'MathOverflow', msg: 'Math overflow' },
+    { code: 6010, name: 'MathUnderflow', msg: 'Math underflow' },
+  ],
+} as const
