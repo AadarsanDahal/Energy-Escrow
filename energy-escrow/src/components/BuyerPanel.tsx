@@ -6,6 +6,9 @@ type BuyerPanelProps = {
   disabled: boolean
   createdTradeAddress: string | null
   depositInProgress: boolean
+  createTxSignature: string | null
+  depositTxSignature: string | null
+  getExplorerUrl: (signature: string) => string
   onSellerChange: (value: string) => void
   onEnergyChange: (value: string) => void
   onPriceChange: (value: string) => void
@@ -22,6 +25,9 @@ export function BuyerPanel({
   disabled,
   createdTradeAddress,
   depositInProgress,
+  createTxSignature,
+  depositTxSignature,
+  getExplorerUrl,
   onSellerChange,
   onEnergyChange,
   onPriceChange,

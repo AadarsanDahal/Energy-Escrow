@@ -1,10 +1,11 @@
 import type { TradeView } from '../lib/anchorClient'
 
 type AdminPanelProps = {
-  trades: (TradeView & { tradeAddress: string })[]
+  trades: (TradeView & { tradeAddress: string; settleTxSignature?: string })[]
   selectedTrade: string | null
   deliveredKwh: string
   disabled: boolean
+  getExplorerUrl: (signature: string) => string
   onSelectTrade: (tradeAddress: string) => void
   onDeliveredKwhChange: (value: string) => void
   onSettle: () => Promise<void>
@@ -16,6 +17,7 @@ export function AdminPanel({
   selectedTrade,
   deliveredKwh,
   disabled,
+  getExplorerUrl,
   onSelectTrade,
   onDeliveredKwhChange,
   onRefreshTrades,
