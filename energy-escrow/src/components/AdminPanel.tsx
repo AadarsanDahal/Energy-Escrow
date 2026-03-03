@@ -50,6 +50,8 @@ export function AdminPanel({
         Refresh Trades
       </button>
 
+
+//random comment to trigger code change detection
       {trades.length === 0 ? (
         <p className="muted">No pending trades yet.</p>
       ) : (
