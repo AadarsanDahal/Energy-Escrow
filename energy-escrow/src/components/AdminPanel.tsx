@@ -1,7 +1,16 @@
-import type { TradeView } from '../lib/anchorClient'
-
 type AdminPanelProps = {
-  trades: (TradeView & { tradeAddress: string; settleTxSignature?: string })[]
+  trades: {
+    tradeAddress: string
+    settleTxSignature?: string
+    buyer: string
+    seller: string
+    energyAmountKwh: string
+    pricePerKwhLamports: string
+    totalCostLamports: string
+    escrowAmountLamports: string
+    endTime: string
+    state: string
+  }[]
   selectedTrade: string | null
   deliveredKwh: string
   disabled: boolean
@@ -51,7 +60,6 @@ export function AdminPanel({
       </button>
 
 
-//random comment to trigger code change detection
       {trades.length === 0 ? (
         <p className="muted">No pending trades yet.</p>
       ) : (
@@ -69,10 +77,10 @@ export function AdminPanel({
                 </div>
                 <div className="trade-item-details">
                   <p>
-                    <strong>Energy:</strong> {trade.energyAmountKwh} kWh @ {trade.pricePerKwhWei} wei/kWh
+                    <strong>Energy:</strong> {trade.energyAmountKwh} kWh @ {trade.pricePerKwhLamports} lamports/kWh
                   </p>
                   <p>
-                    <strong>Total Cost:</strong> {trade.totalCostWei} wei
+                    <strong>Total Cost:</strong> {trade.totalCostLamports} lamports
                   </p>
                   <p>
                     <strong>Ends:</strong> {formatTime(trade.endTime)} ({getTimeUntilSettlement(trade.endTime)})
@@ -96,7 +104,7 @@ export function AdminPanel({
                   <strong>Expected Energy:</strong> {currentTrade.energyAmountKwh} kWh
                 </p>
                 <p>
-                  <strong>Escrow Held:</strong> {currentTrade.escrowAmountWei} wei
+                  <strong>Escrow Held:</strong> {currentTrade.escrowAmountLamports} lamports
                 </p>
               </div>
 

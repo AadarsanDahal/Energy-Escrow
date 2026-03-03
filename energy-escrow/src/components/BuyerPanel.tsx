@@ -1,10 +1,11 @@
 type BuyerPanelProps = {
   seller: string
   energyKwh: string
-  pricePerKwhWei: string
+  pricePerKwhLamports: string
   durationMins: string
   disabled: boolean
   createdTradeAddress: string | null
+  showSuccessMessage: boolean
   depositInProgress: boolean
   onSellerChange: (value: string) => void
   onEnergyChange: (value: string) => void
@@ -14,8 +15,8 @@ type BuyerPanelProps = {
   onDepositEscrow: () => Promise<void>
   tradeDetails?: {
     energyAmountKwh: string
-    pricePerKwhWei: string
-    totalCostWei: string
+    pricePerKwhLamports: string
+    totalCostLamports: string
     seller: string
     state: string
   } | null
@@ -24,10 +25,11 @@ type BuyerPanelProps = {
 export function BuyerPanel({
   seller,
   energyKwh,
-  pricePerKwhWei,
+  pricePerKwhLamports,
   durationMins,
   disabled,
   createdTradeAddress,
+  showSuccessMessage,
   depositInProgress,
   onSellerChange,
   onEnergyChange,
@@ -39,13 +41,13 @@ export function BuyerPanel({
 }: BuyerPanelProps) {
   const totalCost = (() => {
     const energy = Number(energyKwh) || 0
-    const price = Number(pricePerKwhWei) || 0
+    const price = Number(pricePerKwhLamports) || 0
     return (energy * price).toLocaleString()
   })()
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
-    console.log('Create Trade button clicked! Form values:', { seller, energyKwh, pricePerKwhWei, durationMins })
+    console.log('Create Trade button clicked! Form values:', { seller, energyKwh, pricePerKwhLamports, durationMins })
     void onCreateTrade()
   }
 
@@ -73,8 +75,8 @@ export function BuyerPanel({
         </label>
 
         <label>
-          Price per kWh (wei)
-          <input value={pricePerKwhWei} onChange={(event) => onPriceChange(event.target.value)} type="number" min="1" required />
+          Price per kWh (lamports)
+          <input value={pricePerKwhLamports} onChange={(event) => onPriceChange(event.target.value)} type="number" min="1" required />
         </label>
 
         <label>
@@ -90,7 +92,7 @@ export function BuyerPanel({
 
         <div className="cost-summary">
           <p>
-            <strong>Total Cost:</strong> <span className="highlight">{totalCost} wei</span>
+            <strong>Total Cost:</strong> <span className="highlight">{totalCost} lamports</span>
           </p>
         </div>
 
@@ -99,7 +101,7 @@ export function BuyerPanel({
         </button>
       </form>
 
-      {createdTradeAddress && (
+      {createdTradeAddress && showSuccessMessage && (
         <div style={{ marginTop: '1.5rem', padding: '1.5rem', background: '#0b2415', borderRadius: '8px', border: '2px solid #22c55e' }}>
           <h3 style={{ margin: '0 0 1rem 0', color: '#22c55e', fontSize: '1.2rem' }}>✅ Trade Successfully Created!</h3>
           
@@ -115,10 +117,10 @@ export function BuyerPanel({
                 <strong>Energy Amount:</strong> {tradeDetails.energyAmountKwh} kWh
               </p>
               <p style={{ margin: '0.5rem 0', fontSize: '0.95rem' }}>
-                <strong>Price per kWh:</strong> {tradeDetails.pricePerKwhWei} wei
+                <strong>Price per kWh:</strong> {tradeDetails.pricePerKwhLamports} lamports
               </p>
               <p style={{ margin: '0.5rem 0', fontSize: '0.95rem' }}>
-                <strong>Total Cost:</strong> <span style={{ color: '#fbbf24', fontWeight: 'bold' }}>{tradeDetails.totalCostWei} wei</span>
+                <strong>Total Cost:</strong> <span style={{ color: '#fbbf24', fontWeight: 'bold' }}>{tradeDetails.totalCostLamports} lamports</span>
               </p>
               <p style={{ margin: '0.5rem 0', fontSize: '0.95rem' }}>
                 <strong>Seller:</strong> <span style={{ fontFamily: 'monospace' }}>{tradeDetails.seller.slice(0, 8)}...</span>

@@ -3,18 +3,18 @@ import type { FormEvent } from 'react'
 type TradeFormProps = {
   seller: string
   energyAmountKwh: string
-  pricePerKwhWei: string
+  pricePerKwhLamports: string
   startTime: string
   endTime: string
   disabled: boolean
-  onFieldChange: (field: 'seller' | 'energyAmountKwh' | 'pricePerKwhWei' | 'startTime' | 'endTime', value: string) => void
+  onFieldChange: (field: 'seller' | 'energyAmountKwh' | 'pricePerKwhLamports' | 'startTime' | 'endTime', value: string) => void
   onCreateTrade: () => Promise<void>
 }
 
 export function TradeForm({
   seller,
   energyAmountKwh,
-  pricePerKwhWei,
+  pricePerKwhLamports,
   startTime,
   endTime,
   disabled,
@@ -47,10 +47,10 @@ export function TradeForm({
         </label>
 
         <label>
-          Price per kWh (wei)
+          Price per kWh (lamports)
           <input
-            value={pricePerKwhWei}
-            onChange={(event) => onFieldChange('pricePerKwhWei', event.target.value)}
+            value={pricePerKwhLamports}
+            onChange={(event) => onFieldChange('pricePerKwhLamports', event.target.value)}
             type="number"
             min="1"
             required

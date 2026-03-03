@@ -1,19 +1,71 @@
+/* ============================================
+   GLOBAL STYLES & DESIGN TOKENS
+   ============================================ */
+
 :root {
-  font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+  /* Colors */
+  --primary-dark: #0a0f1e;
+  --primary-darker: #06090f;
+  --surface-raised: #1a2332;
+  --surface-overlay: #0f172a;
+  
+  --text-primary: #e9edf2;
+  --text-secondary: #cbd5e1;
+  --text-muted: #94a3b8;
+  
+  --accent-primary: #3b82f6;
+  --accent-primary-dark: #2563eb;
+  --accent-success: #22c55e;
+  --accent-warning: #f59e0b;
+  --accent-danger: #ef4444;
+  
+  --border-color: #2f3f52;
+  --border-light: #475569;
+  
+  /* Spacing */
+  --space-xs: 0.25rem;
+  --space-sm: 0.5rem;
+  --space-md: 1rem;
+  --space-lg: 1.5rem;
+  --space-xl: 2rem;
+  --space-2xl: 3rem;
+  
+  /* Radius */
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  
+  /* Shadows */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.5);
+  
+  /* Typography */
+  font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
-
-  color: #e2e8f0;
-  background-color: #0b1020;
-
+  color: var(--text-primary);
+  background-color: var(--primary-dark);
+  
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
+* {
+  box-sizing: border-box;
+}
+
 body {
   margin: 0;
+  padding: 0;
   min-width: 320px;
   min-height: 100vh;
+  background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary-darker) 100%);
 }
+
+#root {
+  min-height: 100vh;
+}
+
