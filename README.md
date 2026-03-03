@@ -53,7 +53,7 @@ energy_escrow/
 │   └── Cargo.toml
 ├── tests/
 │   └── energy_escrow.ts        # Integration tests
-├── frontend/
+├── energy_escrow/
 │   ├── src/
 │   │   ├── App.tsx             # Main React UI
 │   │   ├── index.tsx           # Entry point
@@ -99,7 +99,7 @@ cd energy_escrow
 cargo build
 
 # Install frontend dependencies
-cd frontend
+cd energy_escrow
 npm install
 cd ..
 ```
@@ -149,8 +149,9 @@ This creates the first trade and outputs wallet addresses.
 ### 5. Start the Frontend
 
 ```bash
-cd frontend
-npm start
+cd energy_escrow
+npm run build
+npm run dev
 ```
 
 Open your browser to `http://localhost:3000`
@@ -545,3 +546,4 @@ solana airdrop 10 <pubkey>
 ---
 
 **Ready to change energy trading forever? 🚀**
+
